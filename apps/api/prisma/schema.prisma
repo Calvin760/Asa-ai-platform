@@ -1,0 +1,353 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================
+// USER (Clerk-linked — one user can belong to one clinic)
+// ============================================================
+
+model User {
+  id          String    @id @default(cuid())
+  email       String    @unique
+  clerkUserId String?   @unique
+  firstName   String?
+  lastName    String?
+  phone       String?
+  role        StaffRole @default(RECEPTIONIST)
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  clinic      Clinic?   @relation(fields: [clinicId], references: [id])
+  clinicId    String?
+
+  appointments Appointment[] @relation("DentistAppointments")
+
+  @@index([clinicId])
+  @@map("users")
+}
+
+enum StaffRole {
+  DENTIST
+  HYGIENIST
+  RECEPTIONIST
+  ADMIN
+}
+
+// ============================================================
+// CLINIC (multi-tenancy anchor — every row scoped by clinicId)
+// ============================================================
+
+model Clinic {
+  id               String   @id @default(cuid())
+  name             String
+  phone            String?
+  email            String?
+  address          String?
+  timezone         String   @default("Africa/Johannesburg")
+  reminderSchedule String   @default("0 8 * * *") // cron expression
+  reminderHoursAhead Int    @default(48)           // how far ahead to look
+  isActive         Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  users        User[]
+  patients     Patient[]
+  appointments Appointment[]
+  reminderLogs ReminderLog[]
+  agentRuns    AgentRun[]
+  conversationSessions ConversationSession[]
+  twilioWhatsAppNumber String? @unique
+
+  @@map("clinics")
+}
+
+// ============================================================
+// PATIENT
+// Full record lives here. AI layer only ever receives
+// firstName, phone, and appointmentType — nothing else.
+// ============================================================
+
+model Patient {
+  id            String    @id @default(cuid())
+  clinicId      String
+  firstName     String
+  lastName      String
+  phone         String
+  email         String?
+  dateOfBirth   DateTime?
+  preferredLang String    @default("en")
+  notes         String?
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  clinic       Clinic        @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  appointments Appointment[]
+  conversationSessions ConversationSession[]
+
+  @@index([clinicId])
+  @@index([phone])
+  @@map("patients")
+}
+
+// ============================================================
+// APPOINTMENT
+// ============================================================
+
+model Appointment {
+  id              String            @id @default(cuid())
+  clinicId        String
+  patientId       String
+  dentistId       String?
+  appointmentType AppointmentType   @default(CHECKUP)
+  status          AppointmentStatus @default(SCHEDULED)
+  scheduledAt     DateTime
+  durationMins    Int               @default(30)
+  notes           String?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  clinic       Clinic        @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  patient      Patient       @relation(fields: [patientId], references: [id])
+  dentist      User?         @relation("DentistAppointments", fields: [dentistId], references: [id])
+  reminderLogs ReminderLog[]
+
+  @@index([clinicId])
+  @@index([patientId])
+  @@index([scheduledAt])
+  @@index([status])
+  @@map("appointments")
+}
+
+enum AppointmentType {
+  CHECKUP
+  CLEANING
+  FILLING
+  EXTRACTION
+  ROOT_CANAL
+  CROWN
+  CONSULTATION
+  EMERGENCY
+  OTHER
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  CONFIRMED
+  CANCELLED
+  NO_SHOW
+  COMPLETED
+  RESCHEDULED
+}
+
+// ============================================================
+// REMINDER LOG (audit trail + analytics source)
+// One row per attempt. Tracks message, channel, delivery,
+// patient reply, and parsed intent.
+// ============================================================
+
+model ReminderLog {
+  id              String          @id @default(cuid())
+  clinicId        String
+  appointmentId   String
+  channel         ReminderChannel
+  status          ReminderStatus  @default(PENDING)
+  messageBody     String
+  scheduledFor    DateTime
+  sentAt          DateTime?
+  deliveredAt     DateTime?
+  patientReply    String?
+  replyReceivedAt DateTime?
+  replyIntent     ReplyIntent?
+  agentRunId      String?
+  providerMsgId   String?         // Twilio/Pindo message SID for delivery webhooks
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  clinic      Clinic      @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  appointment Appointment @relation(fields: [appointmentId], references: [id])
+  agentRun    AgentRun?   @relation(fields: [agentRunId], references: [id])
+
+  @@index([clinicId])
+  @@index([appointmentId])
+  @@index([status])
+  @@index([scheduledFor])
+  @@map("reminder_logs")
+}
+
+enum ReminderChannel {
+  WHATSAPP
+  SMS
+  EMAIL
+}
+
+enum ReminderStatus {
+  PENDING
+  SENT
+  DELIVERED
+  FAILED
+  SKIPPED
+}
+
+enum ReplyIntent {
+  CONFIRMED
+  CANCELLED
+  RESCHEDULE_REQUESTED
+  UNCLEAR
+}
+
+// ============================================================
+// AGENT RUN (one row per cron execution — full audit trail)
+// ============================================================
+
+model AgentRun {
+  id                 String     @id @default(cuid())
+  clinicId           String
+  triggeredBy        RunTrigger @default(CRON)
+  status             RunStatus  @default(RUNNING)
+  startedAt          DateTime   @default(now())
+  completedAt        DateTime?
+  errorMessage       String?
+  toolCallLog        Json?      // full tool call/response sequence
+  remindersAttempted Int        @default(0)
+  remindersSent      Int        @default(0)
+  remindersFailed    Int        @default(0)
+
+  clinic       Clinic        @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  reminderLogs ReminderLog[]
+  conversationSessions ConversationSession[]
+
+  @@index([clinicId])
+  @@index([status])
+  @@index([startedAt])
+  @@map("agent_runs")
+}
+
+enum RunTrigger {
+  CRON
+  MANUAL
+  WEBHOOK
+}
+
+enum RunStatus {
+  RUNNING
+  COMPLETED
+  FAILED
+  PARTIAL
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  clinicId   String?
+  userId     String?
+  action     String   // e.g. CREATE_PATIENT, UPDATE_APPOINTMENT
+  entity     String   // e.g. Patient, Appointment
+  entityId   String?
+  oldValues  Json?
+  newValues  Json?
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+
+  @@index([clinicId])
+  @@index([userId])
+  @@index([entity])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+// ============================================================
+// CONVERSATION SESSION (WhatsApp self-booking state machine)
+// ============================================================
+
+enum ConversationStatus {
+  STARTED
+  IDENTIFYING
+  IDENTIFIED
+  COLLECTING_DETAILS
+  PRESENTING_SLOTS
+  AWAITING_CONFIRMATION
+  CONFIRMED
+  EXPIRED
+  ABANDONED
+}
+
+model ConversationSession {
+  id               String                    @id @default(cuid())
+  clinicId         String
+  patientPhone     String
+  patientId        String?
+  status           ConversationStatus        @default(STARTED)
+  sessionContext   Json                      @default("{}")
+  messageHistory   ConversationMessage[]
+  agentRunId       String?
+  lastMessageAt    DateTime                  @updatedAt
+  createdAt        DateTime                  @default(now())
+  expiresAt        DateTime
+
+  clinic      Clinic        @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  patient     Patient?      @relation(fields: [patientId], references: [id], onDelete: SetNull)
+  agentRun    AgentRun?     @relation(fields: [agentRunId], references: [id], onDelete: SetNull)
+
+  @@index([clinicId])
+  @@index([patientPhone])
+  @@index([status])
+  @@index([expiresAt])
+  @@map("conversation_sessions")
+}
+
+model ConversationMessage {
+  id            String   @id @default(cuid())
+  sessionId     String
+  role          String
+  content       String
+  toolCalls     Json?
+  createdAt     DateTime @default(now())
+
+  session ConversationSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@map("conversation_messages")
+}
+
+enum WaitlistStatus {
+  WAITING
+  OFFERED
+  ACCEPTED
+  EXPIRED
+}
+
+model WaitlistEntry {
+  id              String @id @default(cuid())
+  clinicId        String
+  patientId       String?
+  patientPhone    String?
+  patientName     String
+  appointmentType String
+  status          WaitlistStatus @default(WAITING)
+  preferredDays   String[]
+  preferredTime   String
+  notes           String?
+  expiresAt       DateTime
+  createdAt       DateTime @default(now())
+}
+
+
+model KnowledgeEntry {
+  id        String   @id @default(cuid())
+  clinicId  String
+
+  question  String
+  answer    String
+
+  isActive  Boolean  @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
