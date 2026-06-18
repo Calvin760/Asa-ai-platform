@@ -5,8 +5,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
-import { useApi } from '../../lib/api.client';
-import type { Clinic, User } from '../../lib/types';
+import { useApi } from '../../../lib/api.client';
+import type { Clinic, User } from '../../../lib/types';
 
 export default function OnboardingPage() {
     const router = useRouter();
