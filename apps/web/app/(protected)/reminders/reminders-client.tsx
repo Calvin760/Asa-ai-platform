@@ -76,8 +76,8 @@ export default function RemindersClient({
 
             setLogs(updatedLogs);
             setRuns(updatedRuns);
-        } catch (err: any) {
-            setError(err.message ?? 'Agent run failed');
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : 'Agent run failed');
         } finally {
             setRunning(false);
         }
@@ -154,7 +154,7 @@ export default function RemindersClient({
                 <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
                     {logs.length === 0 ? (
                         <p className="px-5 py-8 text-sm text-gray-400 text-center">
-                            No reminders sent yet. Click "Run reminders now" to start.
+                            No reminders sent yet. Click “Run reminders now” to start.
                         </p>
                     ) : (
                         <table className="w-full text-sm">

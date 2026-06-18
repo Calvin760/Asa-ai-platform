@@ -65,8 +65,8 @@ function AppointmentModal({
             });
             onCreated(appointment);
             onClose();
-        } catch (err: any) {
-            setError(err.message ?? 'Failed to create appointment');
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : 'Failed to create appointment');
         } finally {
             setLoading(false);
         }

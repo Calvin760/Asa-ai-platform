@@ -46,8 +46,8 @@ export default function DashboardClient({
                 `/agent/runs?clinicId=${user.clinicId}`,
             );
             setRuns(updated);
-        } catch (err: any) {
-            setError(err.message ?? 'Agent run failed');
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : 'Agent run failed');
         } finally {
             setLoading(false);
         }
@@ -131,7 +131,7 @@ export default function DashboardClient({
                 </div>
                 {runs.length === 0 ? (
                     <p className="px-5 py-8 text-sm text-gray-400 text-center">
-                        No runs yet. Click "Run reminders now" to start.
+                        No runs yet. Click “Run reminders now” to start.
                     </p>
                 ) : (
                     <table className="w-full text-sm">

@@ -40,8 +40,8 @@ function PatientModal({
             });
             onCreated(patient);
             onClose();
-        } catch (err: any) {
-            setError(err.message ?? 'Failed to create patient');
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : 'Failed to create patient');
         } finally {
             setLoading(false);
         }

@@ -34,8 +34,8 @@ export default function OnboardingPage() {
             const dbUser = await api.get<User>(`/users/clerk/${clerkUser.id}`);
             await api.patch(`/users/${dbUser.id}`, { clinicId: clinic.id });
             router.push('/dashboard');
-        } catch (err: any) {
-            setError(err.message ?? 'Something went wrong');
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : 'Something went wrong');
         } finally {
             setLoading(false);
         }

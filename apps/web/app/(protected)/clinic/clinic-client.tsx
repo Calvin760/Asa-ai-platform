@@ -16,7 +16,6 @@ export default function ClinicClient({
     const api = useApi();
 
     const [clinic, setClinic] = useState(initialClinic);
-    const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState('');
 
@@ -43,8 +42,8 @@ export default function ClinicClient({
             );
 
             setClinic(updated);
-        } catch (err: any) {
-            setError(err.message ?? 'Failed to update clinic');
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : 'Failed to update clinic');
         } finally {
             setSaving(false);
         }
