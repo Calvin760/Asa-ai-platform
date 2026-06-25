@@ -8,7 +8,7 @@ import DashboardClient from './dashboard-client';
 
 export default async function DashboardPage() {
     const { userId } = await auth();
-    // if (!userId) redirect('/sign-in');
+    if (!userId) redirect('/sign-in');
 
     const user = await serverApi.get<User>(`/users/clerk/${userId}`);
     if (!user.clinicId) redirect('/onboarding');

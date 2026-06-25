@@ -7,6 +7,7 @@ export interface Clinic {
     email?: string;
     address?: string;
     timezone: string;
+    twilioWhatsAppNumber: string;
 }
 
 export interface User {

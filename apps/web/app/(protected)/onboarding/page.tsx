@@ -1,11 +1,10 @@
-// apps/web/app/onboarding/page.tsx
+// apps/web/app/(protected)/onboarding/page.tsx
 
 'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
-
 import type { Clinic, User } from '@/lib/types';
 import { useApi } from '@/lib/api.client';
 
@@ -26,17 +25,44 @@ export default function OnboardingPage() {
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         if (!clerkUser) return;
+
         setLoading(true);
         setError('');
 
         try {
+            // Step 1: Create the clinic
             const clinic = await api.post<Clinic>('/clinics', form);
-            const dbUser = await api.get<User>(`/users/clerk/${clerkUser.id}`);
+
+            // Step 2: Get or create the DB user
+            let dbUser: User;
+            try {
+                dbUser = await api.get<User>(`/users/clerk/${clerkUser.id}`);
+            } catch {
+                // User not in DB yet — create them now
+                // This handles the case where the Clerk webhook is disabled
+                dbUser = await api.post<User>('/users', {
+                    email: clerkUser.emailAddresses[0]?.emailAddress,
+                    clerkUserId: clerkUser.id,
+                    firstName: clerkUser.firstName ?? undefined,
+                    lastName: clerkUser.lastName ?? undefined,
+                    role: 'ADMIN',
+                });
+            }
+
+            // Step 3: Link clinic to user
             await api.patch(`/users/${dbUser.id}`, { clinicId: clinic.id });
-            router.push('/dashboard');
+
+            // Step 4: Force server components to re-fetch fresh data
+            // Without router.refresh(), the layout still sees the old cached
+            // user (clinicId = null) and bounces back to /onboarding
+            router.refresh();
+
+            // Step 5: Navigate to dashboard
+            // Use replace() so the back button doesn't return to onboarding
+            router.replace('/dashboard');
+
         } catch (err: unknown) {
-            setError(err instanceof Error ? err.message : 'Something went wrong');
-        } finally {
+            setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
             setLoading(false);
         }
     }
@@ -104,11 +130,15 @@ export default function OnboardingPage() {
                     />
                 </div>
 
-                {error && <p className="text-sm text-red-500">{error}</p>}
+                {error && (
+                    <p className="text-sm text-red-500 bg-red-50 px-3 py-2 rounded-lg">
+                        {error}
+                    </p>
+                )}
 
                 <button
                     type="submit"
-                    disabled={loading}
+                    disabled={loading || !form.name}
                     className="w-full bg-blue-600 text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors"
                 >
                     {loading ? 'Setting up...' : 'Create clinic'}
