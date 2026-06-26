@@ -16,10 +16,12 @@ async function bootstrap() {
   // Global validation
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
+  const port = process.env.PORT || 3001
   // CORS — only allow the Next.js frontend
   const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:3001',
+  'https://asa-ai-platform-web.vercel.app',
   process.env.FRONTEND_URL,
 ].filter(Boolean);
 
@@ -30,8 +32,8 @@ async function bootstrap() {
     allowedHeaders: ['Content-Type', 'Authorization'],
   });
 
-  await app.listen(3001);
-  console.log('API running on http://localhost:3001');
+  await app.listen(port);
+  console.log(`API running on http://localhost:${port}`);
 }
 
 bootstrap();
