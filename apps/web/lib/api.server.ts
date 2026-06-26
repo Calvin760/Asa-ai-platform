@@ -2,7 +2,7 @@
 
 import { auth } from '@clerk/nextjs/server';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
 
 async function request<T>(
     path: string,

@@ -30,8 +30,8 @@ async function bootstrap() {
     allowedHeaders: ['Content-Type', 'Authorization'],
   });
 
-  await app.listen(3000);
-  console.log('API running on http://localhost:3000');
+  await app.listen(3001);
+  console.log('API running on http://localhost:3001');
 }
 
 bootstrap();
