@@ -1,9 +1,11 @@
-// apps/web/app/(protected)/onboarding/layout.tsx
+// app/onboarding/layout.tsx
 
 import { auth } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
-import { serverApi } from '../../../lib/api.server';
-import type { User } from '../../../lib/types';
+
+import { User } from '@/lib/types';
+import { serverApi } from '@/lib/api.server';
+
 
 export default async function OnboardingLayout({
     children,
@@ -12,16 +14,15 @@ export default async function OnboardingLayout({
 }) {
     const { userId } = await auth();
 
-    // Not signed in — go sign in first
+    // Must be signed in to onboard
     if (!userId) redirect('/sign-in');
 
-    // If user already completed onboarding, skip to dashboard
-    // Wrap in try/catch — if DB user doesn't exist yet, show onboarding
+    // Already onboarded → go to dashboard
     try {
         const user = await serverApi.get<User>(`/users/clerk/${userId}`);
         if (user?.clinicId) redirect('/dashboard');
     } catch {
-        // User not in DB yet — let them complete onboarding to create themselves
+        // No DB user yet — that's fine, let them onboard
     }
 
     return (

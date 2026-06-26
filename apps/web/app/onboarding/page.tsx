@@ -52,14 +52,15 @@ export default function OnboardingPage() {
             // Step 3: Link clinic to user
             await api.patch(`/users/${dbUser.id}`, { clinicId: clinic.id });
 
+            
+            // Step 5: Navigate to dashboard
+            // Use replace() so the back button doesn't return to onboarding
+            router.replace('/dashboard');
             // Step 4: Force server components to re-fetch fresh data
             // Without router.refresh(), the layout still sees the old cached
             // user (clinicId = null) and bounces back to /onboarding
             router.refresh();
 
-            // Step 5: Navigate to dashboard
-            // Use replace() so the back button doesn't return to onboarding
-            router.replace('/dashboard');
 
         } catch (err: unknown) {
             setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');

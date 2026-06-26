@@ -11,7 +11,7 @@ import { StaffRole } from '@prisma/client';
 
 export class CreateUserDto {
     @IsEmail()
-    email!: string;           // ← ! tells TS "I guarantee this will be set"
+    email!: string;          
 
     @IsOptional()
     @IsString()
