@@ -19,12 +19,12 @@ const APPOINTMENT_TYPES = [
 ];
 
 const STATUS_STYLES: Record<string, string> = {
-    SCHEDULED: 'bg-blue-100 text-blue-700',
-    CONFIRMED: 'bg-green-100 text-green-700',
-    CANCELLED: 'bg-gray-100 text-gray-500',
-    NO_SHOW: 'bg-red-100 text-red-700',
-    COMPLETED: 'bg-purple-100 text-purple-700',
-    RESCHEDULED: 'bg-yellow-100 text-yellow-700',
+    SCHEDULED: 'bg-[#E3EBE9] text-[#1C3D3A]',
+    CONFIRMED: 'bg-[#E7F5EC] text-[#1F9D55]',
+    CANCELLED: 'bg-[#F3F0E9] text-[#1C3D3A99]',
+    NO_SHOW: 'bg-[#FBEAE9] text-[#C23B3B]',
+    COMPLETED: 'bg-[#F0F2E3] text-[#7C8B3D]',
+    RESCHEDULED: 'bg-[#F5E8E3] text-[#B55538]',
 };
 
 function AppointmentModal({
@@ -73,22 +73,22 @@ function AppointmentModal({
     }
 
     return (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-            <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-5">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#1C3D3A]/40">
+            <div className="w-full max-w-md rounded-xl border border-[#E4E0D6] bg-white p-6 shadow-xl">
+                <h2 className="mb-5 text-lg font-bold text-[#1C3D3A]">
                     New appointment
                 </h2>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Patient <span className="text-red-500">*</span>
+                        <label className="mb-1 block text-sm font-medium text-[#1C3D3A]">
+                            Patient <span className="text-[#C23B3B]">*</span>
                         </label>
                         <select
                             required
                             value={form.patientId}
                             onChange={(e) => setForm({ ...form, patientId: e.target.value })}
-                            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full rounded-lg border border-[#E4E0D6] px-3 py-2 text-sm text-[#1C3D3A] focus:outline-none focus:ring-2 focus:ring-[#B55538]/30"
                         >
                             <option value="">Select a patient</option>
                             {patients.map((p) => (
@@ -100,8 +100,8 @@ function AppointmentModal({
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Type <span className="text-red-500">*</span>
+                        <label className="mb-1 block text-sm font-medium text-[#1C3D3A]">
+                            Type <span className="text-[#C23B3B]">*</span>
                         </label>
                         <select
                             required
@@ -109,7 +109,7 @@ function AppointmentModal({
                             onChange={(e) =>
                                 setForm({ ...form, appointmentType: e.target.value })
                             }
-                            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full rounded-lg border border-[#E4E0D6] px-3 py-2 text-sm text-[#1C3D3A] focus:outline-none focus:ring-2 focus:ring-[#B55538]/30"
                         >
                             {APPOINTMENT_TYPES.map((t) => (
                                 <option key={t} value={t}>
@@ -120,8 +120,8 @@ function AppointmentModal({
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Date & time <span className="text-red-500">*</span>
+                        <label className="mb-1 block text-sm font-medium text-[#1C3D3A]">
+                            Date & time <span className="text-[#C23B3B]">*</span>
                         </label>
                         <input
                             required
@@ -130,12 +130,12 @@ function AppointmentModal({
                             onChange={(e) =>
                                 setForm({ ...form, scheduledAt: e.target.value })
                             }
-                            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full rounded-lg border border-[#E4E0D6] px-3 py-2 text-sm text-[#1C3D3A] focus:outline-none focus:ring-2 focus:ring-[#B55538]/30"
                         />
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="mb-1 block text-sm font-medium text-[#1C3D3A]">
                             Duration (minutes)
                         </label>
                         <select
@@ -143,7 +143,7 @@ function AppointmentModal({
                             onChange={(e) =>
                                 setForm({ ...form, durationMins: e.target.value })
                             }
-                            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full rounded-lg border border-[#E4E0D6] px-3 py-2 text-sm text-[#1C3D3A] focus:outline-none focus:ring-2 focus:ring-[#B55538]/30"
                         >
                             {[15, 30, 45, 60, 90, 120].map((m) => (
                                 <option key={m} value={m}>
@@ -154,31 +154,35 @@ function AppointmentModal({
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="mb-1 block text-sm font-medium text-[#1C3D3A]">
                             Notes
                         </label>
                         <textarea
                             value={form.notes}
                             onChange={(e) => setForm({ ...form, notes: e.target.value })}
                             rows={2}
-                            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full rounded-lg border border-[#E4E0D6] px-3 py-2 text-sm text-[#1C3D3A] focus:outline-none focus:ring-2 focus:ring-[#B55538]/30"
                         />
                     </div>
 
-                    {error && <p className="text-sm text-red-500">{error}</p>}
+                    {error && (
+                        <p className="rounded-lg bg-[#FBEAE9] px-3 py-2 text-sm text-[#C23B3B]">
+                            {error}
+                        </p>
+                    )}
 
                     <div className="flex gap-3 pt-2">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="flex-1 border border-gray-300 text-gray-700 rounded-lg px-4 py-2 text-sm font-medium hover:bg-gray-50 transition-colors"
+                            className="flex-1 rounded-lg border border-[#E4E0D6] px-4 py-2 text-sm font-bold text-[#1C3D3A] transition-colors hover:bg-[#F3F0E9]"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
                             disabled={loading}
-                            className="flex-1 bg-blue-600 text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                            className="flex-1 rounded-lg bg-[#B55538] px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-[#9c4730] disabled:opacity-50"
                         >
                             {loading ? 'Saving...' : 'Book appointment'}
                         </button>
@@ -236,13 +240,13 @@ export default function AppointmentsClient({
     }
 
     return (
-        <div className="max-w-5xl mx-auto space-y-6">
+        <div className="w-full max-w-none space-y-6">
             {/* Header */}
             <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-bold text-gray-900">Appointments</h1>
+                <h1 className="patient-title text-lg font-extrabold">Appointments</h1>
                 <button
                     onClick={() => setShowModal(true)}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+                    className="rounded-lg bg-[#B55538] px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-[#9c4730]"
                 >
                     + New appointment
                 </button>
@@ -254,12 +258,12 @@ export default function AppointmentsClient({
                     type="date"
                     value={filterDate}
                     onChange={(e) => handleDateChange(e.target.value)}
-                    className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="rounded-lg border border-[#E4E0D6] px-3 py-2 text-sm text-[#1C3D3A] focus:outline-none focus:ring-2 focus:ring-[#B55538]/30"
                 />
                 <select
                     value={filterStatus}
                     onChange={(e) => handleStatusChange(e.target.value)}
-                    className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="rounded-lg border border-[#E4E0D6] px-3 py-2 text-sm text-[#1C3D3A] focus:outline-none focus:ring-2 focus:ring-[#B55538]/30"
                 >
                     <option value="">All statuses</option>
                     {Object.keys(STATUS_STYLES).map((s) => (
@@ -275,7 +279,7 @@ export default function AppointmentsClient({
                             setFilterStatus('');
                             applyFilters('', '');
                         }}
-                        className="text-sm text-gray-400 hover:text-gray-600"
+                        className="text-sm text-[#1C3D3A66] hover:text-[#1C3D3A]"
                     >
                         Clear filters
                     </button>
@@ -283,19 +287,19 @@ export default function AppointmentsClient({
             </div>
 
             {/* Table */}
-            <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+            <div className="overflow-hidden rounded-[10px] border border-[#E4E0D6] bg-white">
                 {loading ? (
-                    <p className="px-5 py-8 text-sm text-gray-400 text-center">
+                    <p className="px-5 py-8 text-center text-sm text-[#1C3D3A99]">
                         Loading...
                     </p>
                 ) : appointments.length === 0 ? (
-                    <p className="px-5 py-8 text-sm text-gray-400 text-center">
+                    <p className="px-5 py-8 text-center text-sm text-[#1C3D3A99]">
                         No appointments found.
                     </p>
                 ) : (
                     <table className="w-full text-sm">
                         <thead>
-                            <tr className="text-left text-xs text-gray-400 border-b border-gray-100">
+                            <tr className="border-b border-[#E4E0D6] text-left text-xs text-[#1C3D3A66]">
                                 <th className="px-5 py-3 font-medium">Patient</th>
                                 <th className="px-5 py-3 font-medium">Type</th>
                                 <th className="px-5 py-3 font-medium">Date & time</th>
@@ -307,30 +311,31 @@ export default function AppointmentsClient({
                             {appointments.map((a) => (
                                 <tr
                                     key={a.id}
-                                    className="border-b border-gray-50 last:border-0 hover:bg-gray-50"
+                                    className="border-b border-[#E4E0D6] last:border-0 hover:bg-[#F3F0E9]"
                                 >
-                                    <td className="px-5 py-3 font-medium text-gray-900">
+                                    <td className="px-5 py-3 font-bold text-[#1C3D3A]">
                                         {a.patient
                                             ? `${a.patient.firstName} ${a.patient.lastName}`
                                             : '—'}
                                     </td>
-                                    <td className="px-5 py-3 text-gray-600">
+                                    <td className="px-5 py-3 text-[#1C3D3A99]">
                                         {a.appointmentType.replace('_', ' ')}
                                     </td>
-                                    <td className="px-5 py-3 text-gray-600">
+                                    <td className="px-5 py-3 text-[#1C3D3A99]">
                                         {new Date(a.scheduledAt).toLocaleString('en-ZA', {
                                             timeZone: 'Africa/Johannesburg',
                                             dateStyle: 'medium',
                                             timeStyle: 'short',
                                         })}
                                     </td>
-                                    <td className="px-5 py-3 text-gray-500">
+                                    <td className="px-5 py-3 text-[#1C3D3A99]">
                                         {a.durationMins} min
                                     </td>
                                     <td className="px-5 py-3">
                                         <span
-                                            className={`px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_STYLES[a.status] ?? 'bg-gray-100 text-gray-500'
-                                                }`}
+                                            className={`rounded-full px-2.5 py-1 text-[11px] font-extrabold ${
+                                                STATUS_STYLES[a.status] ?? 'bg-[#F3F0E9] text-[#1C3D3A99]'
+                                            }`}
                                         >
                                             {a.status}
                                         </span>

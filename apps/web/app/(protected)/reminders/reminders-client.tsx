@@ -7,36 +7,36 @@ import { useApi } from '../../../lib/api.client';
 import type { User, ReminderLog, AgentRun } from '../../../lib/types';
 
 const CHANNEL_STYLES: Record<string, string> = {
-    WHATSAPP: 'bg-green-100 text-green-700',
-    SMS: 'bg-blue-100 text-blue-700',
-    EMAIL: 'bg-purple-100 text-purple-700',
+    WHATSAPP: 'bg-[#E7F5EC] text-[#1F9D55]',
+    SMS: 'bg-[#E3EBE9] text-[#1C3D3A]',
+    EMAIL: 'bg-[#F0F2E3] text-[#7C8B3D]',
 };
 
 const STATUS_STYLES: Record<string, string> = {
-    PENDING: 'bg-gray-100 text-gray-500',
-    SENT: 'bg-blue-100 text-blue-700',
-    DELIVERED: 'bg-green-100 text-green-700',
-    FAILED: 'bg-red-100 text-red-700',
-    SKIPPED: 'bg-yellow-100 text-yellow-700',
+    PENDING: 'bg-[#F3F0E9] text-[#1C3D3A99]',
+    SENT: 'bg-[#E3EBE9] text-[#1C3D3A]',
+    DELIVERED: 'bg-[#E7F5EC] text-[#1F9D55]',
+    FAILED: 'bg-[#FBEAE9] text-[#C23B3B]',
+    SKIPPED: 'bg-[#F5E8E3] text-[#B55538]',
 };
 
 const INTENT_STYLES: Record<string, string> = {
-    CONFIRMED: 'bg-green-100 text-green-700',
-    CANCELLED: 'bg-red-100 text-red-700',
-    RESCHEDULE_REQUESTED: 'bg-yellow-100 text-yellow-700',
-    UNCLEAR: 'bg-gray-100 text-gray-500',
+    CONFIRMED: 'bg-[#E7F5EC] text-[#1F9D55]',
+    CANCELLED: 'bg-[#FBEAE9] text-[#C23B3B]',
+    RESCHEDULE_REQUESTED: 'bg-[#F5E8E3] text-[#B55538]',
+    UNCLEAR: 'bg-[#F3F0E9] text-[#1C3D3A99]',
 };
 
 function RunStatus({ status }: { status: AgentRun['status'] }) {
     const styles: Record<AgentRun['status'], string> = {
-        COMPLETED: 'bg-green-100 text-green-700',
-        RUNNING: 'bg-blue-100 text-blue-700',
-        FAILED: 'bg-red-100 text-red-700',
-        PARTIAL: 'bg-yellow-100 text-yellow-700',
+        COMPLETED: 'bg-[#E7F5EC] text-[#1F9D55]',
+        RUNNING: 'bg-[#F5E8E3] text-[#8C4129]',
+        FAILED: 'bg-[#FBEAE9] text-[#C23B3B]',
+        PARTIAL: 'bg-[#F0F2E3] text-[#7C8B3D]',
     };
     return (
         <span
-            className={`px-2 py-0.5 rounded-full text-xs font-medium ${styles[status]}`}
+            className={`px-2.5 py-1 rounded-full text-[11px] font-extrabold ${styles[status]}`}
         >
             {status}
         </span>
@@ -84,23 +84,27 @@ export default function RemindersClient({
     }
 
     return (
-        <div className="max-w-5xl mx-auto space-y-6">
+        <div className="w-full max-w-none space-y-6">
             {/* Header */}
             <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-bold text-gray-900">Reminders</h1>
+                <h1 className="text-2xl font-bold text-[#1C3D3A]">Reminders</h1>
                 <button
                     onClick={triggerAgent}
                     disabled={running}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                    className="bg-[#B55538] text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-[#9c4730] disabled:opacity-50 transition-colors"
                 >
                     {running ? 'Running...' : 'Run reminders now'}
                 </button>
             </div>
 
-            {error && <p className="text-sm text-red-500">{error}</p>}
+            {error && (
+                <div className="rounded-lg border border-[#C23B3B]/30 bg-[#FBEAE9] px-4 py-3 text-sm text-[#C23B3B]">
+                    {error}
+                </div>
+            )}
 
             {/* Stats row */}
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
                 {[
                     {
                         label: 'Total sent',
@@ -123,10 +127,12 @@ export default function RemindersClient({
                 ].map((stat) => (
                     <div
                         key={stat.label}
-                        className="bg-white border border-gray-200 rounded-xl p-5"
+                        className="min-h-[100px] rounded-[10px] border border-[#E4E0D6] bg-white p-4"
                     >
-                        <p className="text-sm text-gray-500">{stat.label}</p>
-                        <p className="text-3xl font-bold text-gray-900 mt-1">
+                        <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#1C3D3A66]">
+                            {stat.label}
+                        </p>
+                        <p className="mt-2 text-[26px] font-extrabold leading-none text-[#1C3D3A]">
                             {stat.value}
                         </p>
                     </div>
@@ -134,15 +140,16 @@ export default function RemindersClient({
             </div>
 
             {/* Tabs */}
-            <div className="flex gap-1 bg-gray-100 rounded-lg p-1 w-fit">
+            <div className="flex w-fit gap-1 rounded-lg bg-[#F3F0E9] p-1">
                 {(['logs', 'runs'] as const).map((tab) => (
                     <button
                         key={tab}
                         onClick={() => setActiveTab(tab)}
-                        className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${activeTab === tab
-                                ? 'bg-white text-gray-900 shadow-sm'
-                                : 'text-gray-500 hover:text-gray-700'
-                            }`}
+                        className={`rounded-md px-4 py-1.5 text-sm font-bold transition-colors ${
+                            activeTab === tab
+                                ? 'bg-white text-[#1C3D3A] shadow-sm'
+                                : 'text-[#1C3D3A99] hover:text-[#1C3D3A]'
+                        }`}
                     >
                         {tab === 'logs' ? 'Reminder logs' : 'Agent runs'}
                     </button>
@@ -151,15 +158,15 @@ export default function RemindersClient({
 
             {/* Reminder logs tab */}
             {activeTab === 'logs' && (
-                <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+                <div className="overflow-hidden rounded-[10px] border border-[#E4E0D6] bg-white">
                     {logs.length === 0 ? (
-                        <p className="px-5 py-8 text-sm text-gray-400 text-center">
-                            No reminders sent yet. Click “Run reminders now” to start.
+                        <p className="px-5 py-8 text-center text-sm text-[#1C3D3A99]">
+                            No reminders sent yet. Click &ldquo;Run reminders now&rdquo; to start.
                         </p>
                     ) : (
                         <table className="w-full text-sm">
                             <thead>
-                                <tr className="text-left text-xs text-gray-400 border-b border-gray-100">
+                                <tr className="border-b border-[#E4E0D6] text-left text-xs text-[#1C3D3A66]">
                                     <th className="px-5 py-3 font-medium">Patient</th>
                                     <th className="px-5 py-3 font-medium">Appointment</th>
                                     <th className="px-5 py-3 font-medium">Channel</th>
@@ -172,18 +179,18 @@ export default function RemindersClient({
                                 {logs.map((log) => (
                                     <tr
                                         key={log.id}
-                                        className="border-b border-gray-50 last:border-0 hover:bg-gray-50"
+                                        className="border-b border-[#E4E0D6] last:border-0 hover:bg-[#F3F0E9]"
                                     >
-                                        <td className="px-5 py-3 font-medium text-gray-900">
+                                        <td className="px-5 py-3 font-bold text-[#1C3D3A]">
                                             {log.appointment?.patient
                                                 ? `${log.appointment.patient.firstName} ${log.appointment.patient.lastName}`
                                                 : '—'}
                                         </td>
-                                        <td className="px-5 py-3 text-gray-600">
+                                        <td className="px-5 py-3 text-[#1C3D3A99]">
                                             <div>
                                                 {log.appointment?.appointmentType?.replace('_', ' ') ?? '—'}
                                             </div>
-                                            <div className="text-xs text-gray-400">
+                                            <div className="text-xs text-[#1C3D3A66]">
                                                 {log.appointment?.scheduledAt
                                                     ? new Date(
                                                         log.appointment.scheduledAt,
@@ -197,18 +204,20 @@ export default function RemindersClient({
                                         </td>
                                         <td className="px-5 py-3">
                                             <span
-                                                className={`px-2 py-0.5 rounded-full text-xs font-medium ${CHANNEL_STYLES[log.channel] ??
-                                                    'bg-gray-100 text-gray-500'
-                                                    }`}
+                                                className={`rounded-full px-2.5 py-1 text-[11px] font-extrabold ${
+                                                    CHANNEL_STYLES[log.channel] ??
+                                                    'bg-[#F3F0E9] text-[#1C3D3A99]'
+                                                }`}
                                             >
                                                 {log.channel}
                                             </span>
                                         </td>
                                         <td className="px-5 py-3">
                                             <span
-                                                className={`px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_STYLES[log.status] ??
-                                                    'bg-gray-100 text-gray-500'
-                                                    }`}
+                                                className={`rounded-full px-2.5 py-1 text-[11px] font-extrabold ${
+                                                    STATUS_STYLES[log.status] ??
+                                                    'bg-[#F3F0E9] text-[#1C3D3A99]'
+                                                }`}
                                             >
                                                 {log.status}
                                             </span>
@@ -216,19 +225,20 @@ export default function RemindersClient({
                                         <td className="px-5 py-3">
                                             {log.replyIntent ? (
                                                 <span
-                                                    className={`px-2 py-0.5 rounded-full text-xs font-medium ${INTENT_STYLES[log.replyIntent] ??
-                                                        'bg-gray-100 text-gray-500'
-                                                        }`}
+                                                    className={`rounded-full px-2.5 py-1 text-[11px] font-extrabold ${
+                                                        INTENT_STYLES[log.replyIntent] ??
+                                                        'bg-[#F3F0E9] text-[#1C3D3A99]'
+                                                    }`}
                                                 >
                                                     {log.replyIntent.replace('_', ' ')}
                                                 </span>
                                             ) : (
-                                                <span className="text-gray-300 text-xs">
+                                                <span className="text-xs text-[#1C3D3A55]">
                                                     awaiting
                                                 </span>
                                             )}
                                         </td>
-                                        <td className="px-5 py-3 text-gray-500 text-xs">
+                                        <td className="px-5 py-3 text-xs text-[#1C3D3A99]">
                                             {log.sentAt
                                                 ? new Date(log.sentAt).toLocaleString('en-ZA', {
                                                     timeZone: 'Africa/Johannesburg',
@@ -247,15 +257,15 @@ export default function RemindersClient({
 
             {/* Agent runs tab */}
             {activeTab === 'runs' && (
-                <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+                <div className="overflow-hidden rounded-[10px] border border-[#E4E0D6] bg-white">
                     {runs.length === 0 ? (
-                        <p className="px-5 py-8 text-sm text-gray-400 text-center">
+                        <p className="px-5 py-8 text-center text-sm text-[#1C3D3A99]">
                             No agent runs yet.
                         </p>
                     ) : (
                         <table className="w-full text-sm">
                             <thead>
-                                <tr className="text-left text-xs text-gray-400 border-b border-gray-100">
+                                <tr className="border-b border-[#E4E0D6] text-left text-xs text-[#1C3D3A66]">
                                     <th className="px-5 py-3 font-medium">Started</th>
                                     <th className="px-5 py-3 font-medium">Trigger</th>
                                     <th className="px-5 py-3 font-medium">Status</th>
@@ -269,31 +279,31 @@ export default function RemindersClient({
                                 {runs.map((run) => (
                                     <tr
                                         key={run.id}
-                                        className="border-b border-gray-50 last:border-0 hover:bg-gray-50"
+                                        className="border-b border-[#E4E0D6] last:border-0 hover:bg-[#F3F0E9]"
                                     >
-                                        <td className="px-5 py-3 text-gray-600">
+                                        <td className="px-5 py-3 text-[#1C3D3A99]">
                                             {new Date(run.startedAt).toLocaleString('en-ZA', {
                                                 timeZone: 'Africa/Johannesburg',
                                                 dateStyle: 'short',
                                                 timeStyle: 'short',
                                             })}
                                         </td>
-                                        <td className="px-5 py-3 text-gray-500">
+                                        <td className="px-5 py-3 text-[#1C3D3A66]">
                                             {run.triggeredBy}
                                         </td>
                                         <td className="px-5 py-3">
                                             <RunStatus status={run.status} />
                                         </td>
-                                        <td className="px-5 py-3 text-gray-600">
+                                        <td className="px-5 py-3 text-[#1C3D3A99]">
                                             {run.remindersAttempted}
                                         </td>
-                                        <td className="px-5 py-3 text-green-600">
+                                        <td className="px-5 py-3 font-bold text-[#1F9D55]">
                                             {run.remindersSent}
                                         </td>
-                                        <td className="px-5 py-3 text-red-500">
+                                        <td className="px-5 py-3 font-bold text-[#C23B3B]">
                                             {run.remindersFailed}
                                         </td>
-                                        <td className="px-5 py-3 text-gray-500">
+                                        <td className="px-5 py-3 text-[#1C3D3A99]">
                                             {run.completedAt
                                                 ? `${Math.round(
                                                     (new Date(run.completedAt).getTime() -

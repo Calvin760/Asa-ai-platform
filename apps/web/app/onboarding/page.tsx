@@ -52,7 +52,7 @@ export default function OnboardingPage() {
             // Step 3: Link clinic to user
             await api.patch(`/users/${dbUser.id}`, { clinicId: clinic.id });
 
-            
+
             // Step 5: Navigate to dashboard
             // Use replace() so the back button doesn't return to onboarding
             router.replace('/dashboard');
@@ -69,82 +69,87 @@ export default function OnboardingPage() {
     }
 
     return (
-        <div className="max-w-lg mx-auto">
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                Set up your clinic
-            </h1>
-            <p className="text-gray-500 mb-8">
-                This only takes a minute. You can update these details later.
-            </p>
+        <div className="flex min-h-screen items-center justify-center bg-[#FAF8F4] px-4">
+            <div className="w-full max-w-lg">
+                <h1 className="mb-2 text-2xl font-bold text-[#1C3D3A]">
+                    Set up your clinic
+                </h1>
+                <p className="mb-8 text-[#1C3D3A99]">
+                    This only takes a minute. You can update these details later.
+                </p>
 
-            <form onSubmit={handleSubmit} className="space-y-5">
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Clinic name <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                        required
-                        type="text"
-                        value={form.name}
-                        onChange={(e) => setForm({ ...form, name: e.target.value })}
-                        placeholder="Smile Dental Clinic"
-                        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                </div>
-
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Phone
-                    </label>
-                    <input
-                        type="text"
-                        value={form.phone}
-                        onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                        placeholder="+27821234567"
-                        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                </div>
-
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Email
-                    </label>
-                    <input
-                        type="email"
-                        value={form.email}
-                        onChange={(e) => setForm({ ...form, email: e.target.value })}
-                        placeholder="info@yourclinic.co.za"
-                        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                </div>
-
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Address
-                    </label>
-                    <input
-                        type="text"
-                        value={form.address}
-                        onChange={(e) => setForm({ ...form, address: e.target.value })}
-                        placeholder="123 Main St, Johannesburg"
-                        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                </div>
-
-                {error && (
-                    <p className="text-sm text-red-500 bg-red-50 px-3 py-2 rounded-lg">
-                        {error}
-                    </p>
-                )}
-
-                <button
-                    type="submit"
-                    disabled={loading || !form.name}
-                    className="w-full bg-blue-600 text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                <form
+                    onSubmit={handleSubmit}
+                    className="space-y-5 rounded-[10px] border border-[#E4E0D6] bg-white p-6"
                 >
-                    {loading ? 'Setting up...' : 'Create clinic'}
-                </button>
-            </form>
+                    <div>
+                        <label className="mb-1 block text-sm font-medium text-[#1C3D3A]">
+                            Clinic name <span className="text-[#C23B3B]">*</span>
+                        </label>
+                        <input
+                            required
+                            type="text"
+                            value={form.name}
+                            onChange={(e) => setForm({ ...form, name: e.target.value })}
+                            placeholder="Smile Dental Clinic"
+                            className="w-full rounded-lg border border-[#E4E0D6] px-3 py-2 text-sm text-[#1C3D3A] focus:outline-none focus:ring-2 focus:ring-[#B55538]/30"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="mb-1 block text-sm font-medium text-[#1C3D3A]">
+                            Phone
+                        </label>
+                        <input
+                            type="text"
+                            value={form.phone}
+                            onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                            placeholder="+27821234567"
+                            className="w-full rounded-lg border border-[#E4E0D6] px-3 py-2 text-sm text-[#1C3D3A] focus:outline-none focus:ring-2 focus:ring-[#B55538]/30"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="mb-1 block text-sm font-medium text-[#1C3D3A]">
+                            Email
+                        </label>
+                        <input
+                            type="email"
+                            value={form.email}
+                            onChange={(e) => setForm({ ...form, email: e.target.value })}
+                            placeholder="info@yourclinic.co.za"
+                            className="w-full rounded-lg border border-[#E4E0D6] px-3 py-2 text-sm text-[#1C3D3A] focus:outline-none focus:ring-2 focus:ring-[#B55538]/30"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="mb-1 block text-sm font-medium text-[#1C3D3A]">
+                            Address
+                        </label>
+                        <input
+                            type="text"
+                            value={form.address}
+                            onChange={(e) => setForm({ ...form, address: e.target.value })}
+                            placeholder="123 Main St, Johannesburg"
+                            className="w-full rounded-lg border border-[#E4E0D6] px-3 py-2 text-sm text-[#1C3D3A] focus:outline-none focus:ring-2 focus:ring-[#B55538]/30"
+                        />
+                    </div>
+
+                    {error && (
+                        <p className="rounded-lg bg-[#FBEAE9] px-3 py-2 text-sm text-[#C23B3B]">
+                            {error}
+                        </p>
+                    )}
+
+                    <button
+                        type="submit"
+                        disabled={loading || !form.name}
+                        className="w-full rounded-lg bg-[#B55538] px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-[#9c4730] disabled:opacity-50"
+                    >
+                        {loading ? 'Setting up...' : 'Create clinic'}
+                    </button>
+                </form>
+            </div>
         </div>
     );
 }

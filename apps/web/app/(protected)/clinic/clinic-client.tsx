@@ -50,17 +50,17 @@ export default function ClinicClient({
     }
 
     return (
-        <div className="max-w-3xl mx-auto space-y-6">
+        <div className="mx-auto w-full max-w-3xl space-y-6">
             {/* Header */}
             <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-bold text-gray-900">
-                    Clinic Settings
+                <h1 className="text-2xl font-bold text-[#1C3D3A]">
+                    Clinic settings
                 </h1>
 
                 <button
                     onClick={handleSave}
                     disabled={saving}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50"
+                    className="rounded-lg bg-[#B55538] px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-[#9c4730] disabled:opacity-50"
                 >
                     {saving ? 'Saving...' : 'Save changes'}
                 </button>
@@ -68,17 +68,17 @@ export default function ClinicClient({
 
             {/* Error */}
             {error && (
-                <div className="text-sm text-red-500">
+                <div className="rounded-lg border border-[#C23B3B]/30 bg-[#FBEAE9] px-4 py-3 text-sm text-[#C23B3B]">
                     {error}
                 </div>
             )}
 
             {/* Form */}
-            <div className="bg-white border border-gray-200 rounded-xl p-6 space-y-5">
+            <div className="space-y-5 rounded-[10px] border border-[#E4E0D6] bg-white p-6">
 
                 {/* Clinic Name */}
                 <div>
-                    <label className="text-sm font-medium text-gray-700">
+                    <label className="text-sm font-medium text-[#1C3D3A]">
                         Clinic name
                     </label>
                     <input
@@ -87,13 +87,13 @@ export default function ClinicClient({
                         onChange={(e) =>
                             handleChange('name', e.target.value)
                         }
-                        className="w-full mt-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"
+                        className="mt-1 w-full rounded-lg border border-[#E4E0D6] px-3 py-2 text-sm text-[#1C3D3A] focus:outline-none focus:ring-2 focus:ring-[#B55538]/30"
                     />
                 </div>
 
                 {/* Phone */}
                 <div>
-                    <label className="text-sm font-medium text-gray-700">
+                    <label className="text-sm font-medium text-[#1C3D3A]">
                         Phone
                     </label>
                     <input
@@ -102,12 +102,12 @@ export default function ClinicClient({
                         onChange={(e) =>
                             handleChange('phone', e.target.value)
                         }
-                        className="w-full mt-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"
+                        className="mt-1 w-full rounded-lg border border-[#E4E0D6] px-3 py-2 text-sm text-[#1C3D3A] focus:outline-none focus:ring-2 focus:ring-[#B55538]/30"
                     />
                 </div>
                 <div>
-                    <label className="text-sm font-medium text-gray-700">
-                        Twilio WhatsApp Number
+                    <label className="text-sm font-medium text-[#1C3D3A]">
+                        Twilio WhatsApp number
                     </label>
                     <input
                         type="text"
@@ -115,13 +115,13 @@ export default function ClinicClient({
                         onChange={(e) =>
                             handleChange('twilioWhatsAppNumber', e.target.value)
                         }
-                        className="w-full mt-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"
+                        className="mt-1 w-full rounded-lg border border-[#E4E0D6] px-3 py-2 text-sm text-[#1C3D3A] focus:outline-none focus:ring-2 focus:ring-[#B55538]/30"
                     />
                 </div>
 
                 {/* Email */}
                 <div>
-                    <label className="text-sm font-medium text-gray-700">
+                    <label className="text-sm font-medium text-[#1C3D3A]">
                         Email
                     </label>
                     <input
@@ -130,13 +130,13 @@ export default function ClinicClient({
                         onChange={(e) =>
                             handleChange('email', e.target.value)
                         }
-                        className="w-full mt-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"
+                        className="mt-1 w-full rounded-lg border border-[#E4E0D6] px-3 py-2 text-sm text-[#1C3D3A] focus:outline-none focus:ring-2 focus:ring-[#B55538]/30"
                     />
                 </div>
 
                 {/* Address */}
                 <div>
-                    <label className="text-sm font-medium text-gray-700">
+                    <label className="text-sm font-medium text-[#1C3D3A]">
                         Address
                     </label>
                     <textarea
@@ -144,13 +144,13 @@ export default function ClinicClient({
                         onChange={(e) =>
                             handleChange('address', e.target.value)
                         }
-                        className="w-full mt-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"
+                        className="mt-1 w-full rounded-lg border border-[#E4E0D6] px-3 py-2 text-sm text-[#1C3D3A] focus:outline-none focus:ring-2 focus:ring-[#B55538]/30"
                     />
                 </div>
 
                 {/* Working hours (simple version) */}
                 <div>
-                    <label className="text-sm font-medium text-gray-700">
+                    <label className="text-sm font-medium text-[#1C3D3A]">
                         Working hours
                     </label>
                     {/* <input
@@ -160,7 +160,7 @@ export default function ClinicClient({
                             handleChange('workingHours', e.target.value)
                         }
                         placeholder="e.g. 09:00 - 17:00"
-                        className="w-full mt-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"
+                        className="mt-1 w-full rounded-lg border border-[#E4E0D6] px-3 py-2 text-sm text-[#1C3D3A] focus:outline-none focus:ring-2 focus:ring-[#B55538]/30"
                     /> */}
                 </div>
 
