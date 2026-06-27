@@ -148,22 +148,6 @@ export default function ClinicClient({
                     />
                 </div>
 
-                {/* Working hours (simple version) */}
-                <div>
-                    <label className="text-sm font-medium text-[#1C3D3A]">
-                        Working hours
-                    </label>
-                    {/* <input
-                        type="text"
-                        value={clinic.workingHours ?? ''}
-                        onChange={(e) =>
-                            handleChange('workingHours', e.target.value)
-                        }
-                        placeholder="e.g. 09:00 - 17:00"
-                        className="mt-1 w-full rounded-lg border border-[#E4E0D6] px-3 py-2 text-sm text-[#1C3D3A] focus:outline-none focus:ring-2 focus:ring-[#B55538]/30"
-                    /> */}
-                </div>
-
             </div>
         </div>
     );

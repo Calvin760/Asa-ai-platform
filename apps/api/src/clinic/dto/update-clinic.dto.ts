@@ -1,38 +1,51 @@
 // src/clinic/dto/update-clinic.dto.ts
 
-import { IsString, IsOptional, IsEmail, IsInt, Min, Max } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsEmail,
+  IsInt,
+  Min,
+  Max,
+  IsBoolean,
+} from 'class-validator';
 
 export class UpdateClinicDto {
-    @IsOptional()
-    @IsString()
-    name?: string;
+  @IsOptional()
+  @IsString()
+  name?: string;
 
-    @IsOptional()
-    @IsString()
-    phone?: string;
+  @IsOptional()
+  @IsString()
+  phone?: string;
 
-    @IsOptional()
-    @IsEmail()
-    email?: string;
+  @IsOptional()
+  @IsEmail()
+  email?: string;
 
-    @IsOptional()
-    @IsString()
-    address?: string;
+  @IsOptional()
+  @IsString()
+  address?: string;
 
-    @IsOptional()
-    @IsString()
-    timezone?: string;
+  @IsOptional()
+  @IsString()
+  timezone?: string;
 
-    @IsOptional()
-    @IsString()
-    reminderSchedule?: string;
+  @IsOptional()
+  @IsString()
+  twilioWhatsAppNumber?: string;
 
-    @IsOptional()
-    @IsInt()
-    @Min(1)
-    @Max(72)
-    reminderHoursAhead?: number;
+  @IsOptional()
+  @IsString()
+  reminderSchedule?: string;
 
-    @IsOptional()
-    isActive?: boolean;
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(72)
+  reminderHoursAhead?: number;
+
+  @IsOptional()
+  @IsBoolean()
+  isActive?: boolean;
 }
