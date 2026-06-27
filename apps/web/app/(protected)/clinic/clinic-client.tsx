@@ -6,6 +6,10 @@ import { useState } from 'react';
 import { useApi } from '../../../lib/api.client';
 import type { User, Clinic } from '../../../lib/types';
 
+function stripWhatsAppPrefix(value: string | null | undefined) {
+    return (value ?? '').replace(/^whatsapp:/i, '');
+}
+
 export default function ClinicClient({
     user,
     initialClinic,
@@ -16,6 +20,9 @@ export default function ClinicClient({
     const api = useApi();
 
     const [clinic, setClinic] = useState(initialClinic);
+    const [waNumber, setWaNumber] = useState(() =>
+        stripWhatsAppPrefix(initialClinic.twilioWhatsAppNumber),
+    );
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState('');
 
@@ -32,16 +39,30 @@ export default function ClinicClient({
     async function handleSave() {
         if (!user.clinicId) return;
 
-        setSaving(true);
         setError('');
 
+        const digits = waNumber.trim();
+
+        if (digits && !digits.startsWith('+')) {
+            setError('WhatsApp number must include a country code, e.g. +27614152212.');
+            return;
+        }
+
+        setSaving(true);
+
         try {
+            const payload = {
+                ...clinic,
+                twilioWhatsAppNumber: digits ? `whatsapp:${digits}` : '',
+            };
+
             const updated = await api.patch<Clinic>(
                 `/clinics/${user.clinicId}`,
-                clinic
+                payload
             );
 
             setClinic(updated);
+            setWaNumber(stripWhatsAppPrefix(updated.twilioWhatsAppNumber));
         } catch (err: unknown) {
             setError(err instanceof Error ? err.message : 'Failed to update clinic');
         } finally {
@@ -52,7 +73,7 @@ export default function ClinicClient({
     return (
         <div className="mx-auto w-full max-w-3xl space-y-6">
             {/* Header */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <h1 className="text-2xl font-bold text-[#1C3D3A]">
                     Clinic settings
                 </h1>
@@ -60,7 +81,7 @@ export default function ClinicClient({
                 <button
                     onClick={handleSave}
                     disabled={saving}
-                    className="rounded-lg bg-[#B55538] px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-[#9c4730] disabled:opacity-50"
+                    className="w-full rounded-lg bg-[#B55538] px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-[#9c4730] disabled:opacity-50 sm:w-auto"
                 >
                     {saving ? 'Saving...' : 'Save changes'}
                 </button>
@@ -74,7 +95,7 @@ export default function ClinicClient({
             )}
 
             {/* Form */}
-            <div className="space-y-5 rounded-[10px] border border-[#E4E0D6] bg-white p-6">
+            <div className="space-y-5 rounded-[10px] border border-[#E4E0D6] bg-white p-5 sm:p-6">
 
                 {/* Clinic Name */}
                 <div>
@@ -105,18 +126,31 @@ export default function ClinicClient({
                         className="mt-1 w-full rounded-lg border border-[#E4E0D6] px-3 py-2 text-sm text-[#1C3D3A] focus:outline-none focus:ring-2 focus:ring-[#B55538]/30"
                     />
                 </div>
+
+                {/* Twilio WhatsApp number */}
                 <div>
                     <label className="text-sm font-medium text-[#1C3D3A]">
                         Twilio WhatsApp number
                     </label>
-                    <input
-                        type="text"
-                        value={clinic.twilioWhatsAppNumber ?? ''}
-                        onChange={(e) =>
-                            handleChange('twilioWhatsAppNumber', e.target.value)
-                        }
-                        className="mt-1 w-full rounded-lg border border-[#E4E0D6] px-3 py-2 text-sm text-[#1C3D3A] focus:outline-none focus:ring-2 focus:ring-[#B55538]/30"
-                    />
+                    <div className="mt-1 flex items-stretch overflow-hidden rounded-lg border border-[#E4E0D6] focus-within:ring-2 focus-within:ring-[#B55538]/30">
+                        <span className="flex items-center bg-[#F3F0E9] px-3 text-sm font-bold text-[#1C3D3A99]">
+                            whatsapp:
+                        </span>
+                        <input
+                            type="text"
+                            inputMode="tel"
+                            value={waNumber}
+                            placeholder="+27614152212"
+                            onChange={(e) => setWaNumber(e.target.value.trim())}
+                            className="min-w-0 flex-1 px-3 py-2 text-sm text-[#1C3D3A] outline-none"
+                        />
+                    </div>
+                    <p className="mt-1.5 text-xs text-[#1C3D3A99]">
+                        Include the country code, e.g. +27614152212. Saved as{' '}
+                        <span className="font-medium">
+                            whatsapp:{waNumber || '...'}
+                        </span>
+                    </p>
                 </div>
 
                 {/* Email */}

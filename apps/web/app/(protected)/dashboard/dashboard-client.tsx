@@ -109,13 +109,13 @@ function UpcomingAppointmentRow({ appointment }: { appointment: Appointment }) {
   });
 
   return (
-    <div className="flex items-center gap-4 rounded-[9px] border border-[#E4E0D6] bg-white px-4 py-3">
+    <div className="flex flex-wrap items-center gap-3 rounded-[9px] border border-[#E4E0D6] bg-white px-4 py-3 sm:gap-4">
       <div className="w-[88px] shrink-0">
         <p className="text-sm font-bold text-[#1C3D3A]">{dateLabel}</p>
         <p className="text-xs text-[#1C3D3A99]">{timeLabel}</p>
       </div>
 
-      <div className="min-w-0 flex-1">
+      <div className="min-w-0 flex-1 basis-[140px]">
         <p className="truncate text-sm font-extrabold text-[#1C3D3A]">
           {getPatientName(appointment)}
         </p>
@@ -220,9 +220,9 @@ export default function DashboardClient({
         />
       </div>
 
-      <div className="flex items-center justify-between rounded-[9px] border border-[#B55538]/25 bg-[#F5E8E3] px-4 py-3 text-sm">
-        <div className="flex items-center gap-3 text-[#8C4129]">
-          <i className="ti ti-sparkles text-base" />
+      <div className="flex flex-col gap-3 rounded-[9px] border border-[#B55538]/25 bg-[#F5E8E3] px-4 py-3 text-sm sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-start gap-3 text-[#8C4129] sm:items-center">
+          <i className="ti ti-sparkles mt-0.5 text-base sm:mt-0" />
           <p>
             {lastRun ? (
               <>
@@ -245,7 +245,7 @@ export default function DashboardClient({
         <button
           onClick={triggerAgent}
           disabled={loading}
-          className="rounded-lg border border-[#B55538]/40 px-4 py-1.5 text-xs font-extrabold text-[#8C4129] hover:bg-[#EFDCD4] disabled:opacity-50"
+          className="w-full shrink-0 rounded-lg border border-[#B55538]/40 px-4 py-1.5 text-xs font-extrabold text-[#8C4129] hover:bg-[#EFDCD4] disabled:opacity-50 sm:w-auto"
         >
           {loading ? 'Running...' : 'Run now'}
         </button>
@@ -302,45 +302,47 @@ export default function DashboardClient({
               No runs yet. Click &ldquo;Run now&rdquo; to start.
             </p>
           ) : (
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-[#E4E0D6] text-left text-xs text-[#1C3D3A66]">
-                  <th className="px-5 py-3 font-medium">Time</th>
-                  <th className="px-5 py-3 font-medium">Trigger</th>
-                  <th className="px-5 py-3 font-medium">Status</th>
-                  <th className="px-5 py-3 font-medium">Sent</th>
-                  <th className="px-5 py-3 font-medium">Failed</th>
-                </tr>
-              </thead>
-              <tbody>
-                {runs.map((run) => (
-                  <tr
-                    key={run.id}
-                    className="border-b border-[#E4E0D6] last:border-0 hover:bg-[#F3F0E9]"
-                  >
-                    <td className="px-5 py-3 text-[#1C3D3A99]">
-                      {new Date(run.startedAt).toLocaleString('en-ZA', {
-                        timeZone: 'Africa/Johannesburg',
-                        dateStyle: 'short',
-                        timeStyle: 'short',
-                      })}
-                    </td>
-                    <td className="px-5 py-3 text-[#1C3D3A66]">
-                      {run.triggeredBy}
-                    </td>
-                    <td className="px-5 py-3">
-                      <StatusBadge status={run.status} />
-                    </td>
-                    <td className="px-5 py-3 font-bold text-[#1F9D55]">
-                      {run.remindersSent}
-                    </td>
-                    <td className="px-5 py-3 font-bold text-[#C23B3B]">
-                      {run.remindersFailed}
-                    </td>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[560px] text-sm">
+                <thead>
+                  <tr className="border-b border-[#E4E0D6] text-left text-xs text-[#1C3D3A66]">
+                    <th className="px-5 py-3 font-medium">Time</th>
+                    <th className="px-5 py-3 font-medium">Trigger</th>
+                    <th className="px-5 py-3 font-medium">Status</th>
+                    <th className="px-5 py-3 font-medium">Sent</th>
+                    <th className="px-5 py-3 font-medium">Failed</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {runs.map((run) => (
+                    <tr
+                      key={run.id}
+                      className="border-b border-[#E4E0D6] last:border-0 hover:bg-[#F3F0E9]"
+                    >
+                      <td className="whitespace-nowrap px-5 py-3 text-[#1C3D3A99]">
+                        {new Date(run.startedAt).toLocaleString('en-ZA', {
+                          timeZone: 'Africa/Johannesburg',
+                          dateStyle: 'short',
+                          timeStyle: 'short',
+                        })}
+                      </td>
+                      <td className="whitespace-nowrap px-5 py-3 text-[#1C3D3A66]">
+                        {run.triggeredBy}
+                      </td>
+                      <td className="px-5 py-3">
+                        <StatusBadge status={run.status} />
+                      </td>
+                      <td className="px-5 py-3 font-bold text-[#1F9D55]">
+                        {run.remindersSent}
+                      </td>
+                      <td className="px-5 py-3 font-bold text-[#C23B3B]">
+                        {run.remindersFailed}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
       </section>

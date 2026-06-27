@@ -69,18 +69,18 @@ export default function OnboardingPage() {
     }
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-[#FAF8F4] px-4">
+        <div className="flex min-h-screen items-start justify-center overflow-y-auto bg-[#FAF8F4] px-4 py-10 sm:items-center sm:py-12">
             <div className="w-full max-w-lg">
-                <h1 className="mb-2 text-2xl font-bold text-[#1C3D3A]">
+                <h1 className="mb-2 text-xl font-bold text-[#1C3D3A] sm:text-2xl">
                     Set up your clinic
                 </h1>
-                <p className="mb-8 text-[#1C3D3A99]">
+                <p className="mb-6 text-sm text-[#1C3D3A99] sm:mb-8 sm:text-base">
                     This only takes a minute. You can update these details later.
                 </p>
 
                 <form
                     onSubmit={handleSubmit}
-                    className="space-y-5 rounded-[10px] border border-[#E4E0D6] bg-white p-6"
+                    className="space-y-5 rounded-[10px] border border-[#E4E0D6] bg-white p-5 sm:p-6"
                 >
                     <div>
                         <label className="mb-1 block text-sm font-medium text-[#1C3D3A]">
@@ -102,6 +102,7 @@ export default function OnboardingPage() {
                         </label>
                         <input
                             type="text"
+                            inputMode="tel"
                             value={form.phone}
                             onChange={(e) => setForm({ ...form, phone: e.target.value })}
                             placeholder="+27821234567"

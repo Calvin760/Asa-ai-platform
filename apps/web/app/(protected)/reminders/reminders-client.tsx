@@ -36,7 +36,7 @@ function RunStatus({ status }: { status: AgentRun['status'] }) {
     };
     return (
         <span
-            className={`px-2.5 py-1 rounded-full text-[11px] font-extrabold ${styles[status]}`}
+            className={`px-2.5 py-1 rounded-full text-[11px] font-extrabold whitespace-nowrap ${styles[status]}`}
         >
             {status}
         </span>
@@ -86,12 +86,12 @@ export default function RemindersClient({
     return (
         <div className="w-full max-w-none space-y-6">
             {/* Header */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <h1 className="text-2xl font-bold text-[#1C3D3A]">Reminders</h1>
                 <button
                     onClick={triggerAgent}
                     disabled={running}
-                    className="bg-[#B55538] text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-[#9c4730] disabled:opacity-50 transition-colors"
+                    className="w-full rounded-lg bg-[#B55538] px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-[#9c4730] disabled:opacity-50 sm:w-auto"
                 >
                     {running ? 'Running...' : 'Run reminders now'}
                 </button>
@@ -140,20 +140,22 @@ export default function RemindersClient({
             </div>
 
             {/* Tabs */}
-            <div className="flex w-fit gap-1 rounded-lg bg-[#F3F0E9] p-1">
-                {(['logs', 'runs'] as const).map((tab) => (
-                    <button
-                        key={tab}
-                        onClick={() => setActiveTab(tab)}
-                        className={`rounded-md px-4 py-1.5 text-sm font-bold transition-colors ${
-                            activeTab === tab
-                                ? 'bg-white text-[#1C3D3A] shadow-sm'
-                                : 'text-[#1C3D3A99] hover:text-[#1C3D3A]'
-                        }`}
-                    >
-                        {tab === 'logs' ? 'Reminder logs' : 'Agent runs'}
-                    </button>
-                ))}
+            <div className="-mx-1 overflow-x-auto px-1">
+                <div className="flex w-fit gap-1 rounded-lg bg-[#F3F0E9] p-1">
+                    {(['logs', 'runs'] as const).map((tab) => (
+                        <button
+                            key={tab}
+                            onClick={() => setActiveTab(tab)}
+                            className={`whitespace-nowrap rounded-md px-4 py-1.5 text-sm font-bold transition-colors ${
+                                activeTab === tab
+                                    ? 'bg-white text-[#1C3D3A] shadow-sm'
+                                    : 'text-[#1C3D3A99] hover:text-[#1C3D3A]'
+                            }`}
+                        >
+                            {tab === 'logs' ? 'Reminder logs' : 'Agent runs'}
+                        </button>
+                    ))}
+                </div>
             </div>
 
             {/* Reminder logs tab */}
@@ -164,93 +166,95 @@ export default function RemindersClient({
                             No reminders sent yet. Click &ldquo;Run reminders now&rdquo; to start.
                         </p>
                     ) : (
-                        <table className="w-full text-sm">
-                            <thead>
-                                <tr className="border-b border-[#E4E0D6] text-left text-xs text-[#1C3D3A66]">
-                                    <th className="px-5 py-3 font-medium">Patient</th>
-                                    <th className="px-5 py-3 font-medium">Appointment</th>
-                                    <th className="px-5 py-3 font-medium">Channel</th>
-                                    <th className="px-5 py-3 font-medium">Status</th>
-                                    <th className="px-5 py-3 font-medium">Reply</th>
-                                    <th className="px-5 py-3 font-medium">Sent at</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {logs.map((log) => (
-                                    <tr
-                                        key={log.id}
-                                        className="border-b border-[#E4E0D6] last:border-0 hover:bg-[#F3F0E9]"
-                                    >
-                                        <td className="px-5 py-3 font-bold text-[#1C3D3A]">
-                                            {log.appointment?.patient
-                                                ? `${log.appointment.patient.firstName} ${log.appointment.patient.lastName}`
-                                                : '—'}
-                                        </td>
-                                        <td className="px-5 py-3 text-[#1C3D3A99]">
-                                            <div>
-                                                {log.appointment?.appointmentType?.replace('_', ' ') ?? '—'}
-                                            </div>
-                                            <div className="text-xs text-[#1C3D3A66]">
-                                                {log.appointment?.scheduledAt
-                                                    ? new Date(
-                                                        log.appointment.scheduledAt,
-                                                    ).toLocaleString('en-ZA', {
+                        <div className="overflow-x-auto">
+                            <table className="w-full min-w-[760px] text-sm">
+                                <thead>
+                                    <tr className="border-b border-[#E4E0D6] text-left text-xs text-[#1C3D3A66]">
+                                        <th className="px-5 py-3 font-medium">Patient</th>
+                                        <th className="px-5 py-3 font-medium">Appointment</th>
+                                        <th className="px-5 py-3 font-medium">Channel</th>
+                                        <th className="px-5 py-3 font-medium">Status</th>
+                                        <th className="px-5 py-3 font-medium">Reply</th>
+                                        <th className="px-5 py-3 font-medium">Sent at</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {logs.map((log) => (
+                                        <tr
+                                            key={log.id}
+                                            className="border-b border-[#E4E0D6] last:border-0 hover:bg-[#F3F0E9]"
+                                        >
+                                            <td className="whitespace-nowrap px-5 py-3 font-bold text-[#1C3D3A]">
+                                                {log.appointment?.patient
+                                                    ? `${log.appointment.patient.firstName} ${log.appointment.patient.lastName}`
+                                                    : '—'}
+                                            </td>
+                                            <td className="whitespace-nowrap px-5 py-3 text-[#1C3D3A99]">
+                                                <div>
+                                                    {log.appointment?.appointmentType?.replace('_', ' ') ?? '—'}
+                                                </div>
+                                                <div className="text-xs text-[#1C3D3A66]">
+                                                    {log.appointment?.scheduledAt
+                                                        ? new Date(
+                                                            log.appointment.scheduledAt,
+                                                        ).toLocaleString('en-ZA', {
+                                                            timeZone: 'Africa/Johannesburg',
+                                                            dateStyle: 'short',
+                                                            timeStyle: 'short',
+                                                        })
+                                                        : ''}
+                                                </div>
+                                            </td>
+                                            <td className="whitespace-nowrap px-5 py-3">
+                                                <span
+                                                    className={`rounded-full px-2.5 py-1 text-[11px] font-extrabold ${
+                                                        CHANNEL_STYLES[log.channel] ??
+                                                        'bg-[#F3F0E9] text-[#1C3D3A99]'
+                                                    }`}
+                                                >
+                                                    {log.channel}
+                                                </span>
+                                            </td>
+                                            <td className="whitespace-nowrap px-5 py-3">
+                                                <span
+                                                    className={`rounded-full px-2.5 py-1 text-[11px] font-extrabold ${
+                                                        STATUS_STYLES[log.status] ??
+                                                        'bg-[#F3F0E9] text-[#1C3D3A99]'
+                                                    }`}
+                                                >
+                                                    {log.status}
+                                                </span>
+                                            </td>
+                                            <td className="whitespace-nowrap px-5 py-3">
+                                                {log.replyIntent ? (
+                                                    <span
+                                                        className={`rounded-full px-2.5 py-1 text-[11px] font-extrabold ${
+                                                            INTENT_STYLES[log.replyIntent] ??
+                                                            'bg-[#F3F0E9] text-[#1C3D3A99]'
+                                                        }`}
+                                                    >
+                                                        {log.replyIntent.replace('_', ' ')}
+                                                    </span>
+                                                ) : (
+                                                    <span className="text-xs text-[#1C3D3A55]">
+                                                        awaiting
+                                                    </span>
+                                                )}
+                                            </td>
+                                            <td className="whitespace-nowrap px-5 py-3 text-xs text-[#1C3D3A99]">
+                                                {log.sentAt
+                                                    ? new Date(log.sentAt).toLocaleString('en-ZA', {
                                                         timeZone: 'Africa/Johannesburg',
                                                         dateStyle: 'short',
                                                         timeStyle: 'short',
                                                     })
-                                                    : ''}
-                                            </div>
-                                        </td>
-                                        <td className="px-5 py-3">
-                                            <span
-                                                className={`rounded-full px-2.5 py-1 text-[11px] font-extrabold ${
-                                                    CHANNEL_STYLES[log.channel] ??
-                                                    'bg-[#F3F0E9] text-[#1C3D3A99]'
-                                                }`}
-                                            >
-                                                {log.channel}
-                                            </span>
-                                        </td>
-                                        <td className="px-5 py-3">
-                                            <span
-                                                className={`rounded-full px-2.5 py-1 text-[11px] font-extrabold ${
-                                                    STATUS_STYLES[log.status] ??
-                                                    'bg-[#F3F0E9] text-[#1C3D3A99]'
-                                                }`}
-                                            >
-                                                {log.status}
-                                            </span>
-                                        </td>
-                                        <td className="px-5 py-3">
-                                            {log.replyIntent ? (
-                                                <span
-                                                    className={`rounded-full px-2.5 py-1 text-[11px] font-extrabold ${
-                                                        INTENT_STYLES[log.replyIntent] ??
-                                                        'bg-[#F3F0E9] text-[#1C3D3A99]'
-                                                    }`}
-                                                >
-                                                    {log.replyIntent.replace('_', ' ')}
-                                                </span>
-                                            ) : (
-                                                <span className="text-xs text-[#1C3D3A55]">
-                                                    awaiting
-                                                </span>
-                                            )}
-                                        </td>
-                                        <td className="px-5 py-3 text-xs text-[#1C3D3A99]">
-                                            {log.sentAt
-                                                ? new Date(log.sentAt).toLocaleString('en-ZA', {
-                                                    timeZone: 'Africa/Johannesburg',
-                                                    dateStyle: 'short',
-                                                    timeStyle: 'short',
-                                                })
-                                                : '—'}
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                                    : '—'}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     )}
                 </div>
             )}
@@ -263,59 +267,61 @@ export default function RemindersClient({
                             No agent runs yet.
                         </p>
                     ) : (
-                        <table className="w-full text-sm">
-                            <thead>
-                                <tr className="border-b border-[#E4E0D6] text-left text-xs text-[#1C3D3A66]">
-                                    <th className="px-5 py-3 font-medium">Started</th>
-                                    <th className="px-5 py-3 font-medium">Trigger</th>
-                                    <th className="px-5 py-3 font-medium">Status</th>
-                                    <th className="px-5 py-3 font-medium">Attempted</th>
-                                    <th className="px-5 py-3 font-medium">Sent</th>
-                                    <th className="px-5 py-3 font-medium">Failed</th>
-                                    <th className="px-5 py-3 font-medium">Duration</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {runs.map((run) => (
-                                    <tr
-                                        key={run.id}
-                                        className="border-b border-[#E4E0D6] last:border-0 hover:bg-[#F3F0E9]"
-                                    >
-                                        <td className="px-5 py-3 text-[#1C3D3A99]">
-                                            {new Date(run.startedAt).toLocaleString('en-ZA', {
-                                                timeZone: 'Africa/Johannesburg',
-                                                dateStyle: 'short',
-                                                timeStyle: 'short',
-                                            })}
-                                        </td>
-                                        <td className="px-5 py-3 text-[#1C3D3A66]">
-                                            {run.triggeredBy}
-                                        </td>
-                                        <td className="px-5 py-3">
-                                            <RunStatus status={run.status} />
-                                        </td>
-                                        <td className="px-5 py-3 text-[#1C3D3A99]">
-                                            {run.remindersAttempted}
-                                        </td>
-                                        <td className="px-5 py-3 font-bold text-[#1F9D55]">
-                                            {run.remindersSent}
-                                        </td>
-                                        <td className="px-5 py-3 font-bold text-[#C23B3B]">
-                                            {run.remindersFailed}
-                                        </td>
-                                        <td className="px-5 py-3 text-[#1C3D3A99]">
-                                            {run.completedAt
-                                                ? `${Math.round(
-                                                    (new Date(run.completedAt).getTime() -
-                                                        new Date(run.startedAt).getTime()) /
-                                                    1000,
-                                                )}s`
-                                                : '—'}
-                                        </td>
+                        <div className="overflow-x-auto">
+                            <table className="w-full min-w-[760px] text-sm">
+                                <thead>
+                                    <tr className="border-b border-[#E4E0D6] text-left text-xs text-[#1C3D3A66]">
+                                        <th className="px-5 py-3 font-medium">Started</th>
+                                        <th className="px-5 py-3 font-medium">Trigger</th>
+                                        <th className="px-5 py-3 font-medium">Status</th>
+                                        <th className="px-5 py-3 font-medium">Attempted</th>
+                                        <th className="px-5 py-3 font-medium">Sent</th>
+                                        <th className="px-5 py-3 font-medium">Failed</th>
+                                        <th className="px-5 py-3 font-medium">Duration</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    {runs.map((run) => (
+                                        <tr
+                                            key={run.id}
+                                            className="border-b border-[#E4E0D6] last:border-0 hover:bg-[#F3F0E9]"
+                                        >
+                                            <td className="whitespace-nowrap px-5 py-3 text-[#1C3D3A99]">
+                                                {new Date(run.startedAt).toLocaleString('en-ZA', {
+                                                    timeZone: 'Africa/Johannesburg',
+                                                    dateStyle: 'short',
+                                                    timeStyle: 'short',
+                                                })}
+                                            </td>
+                                            <td className="whitespace-nowrap px-5 py-3 text-[#1C3D3A66]">
+                                                {run.triggeredBy}
+                                            </td>
+                                            <td className="whitespace-nowrap px-5 py-3">
+                                                <RunStatus status={run.status} />
+                                            </td>
+                                            <td className="whitespace-nowrap px-5 py-3 text-[#1C3D3A99]">
+                                                {run.remindersAttempted}
+                                            </td>
+                                            <td className="whitespace-nowrap px-5 py-3 font-bold text-[#1F9D55]">
+                                                {run.remindersSent}
+                                            </td>
+                                            <td className="whitespace-nowrap px-5 py-3 font-bold text-[#C23B3B]">
+                                                {run.remindersFailed}
+                                            </td>
+                                            <td className="whitespace-nowrap px-5 py-3 text-[#1C3D3A99]">
+                                                {run.completedAt
+                                                    ? `${Math.round(
+                                                        (new Date(run.completedAt).getTime() -
+                                                            new Date(run.startedAt).getTime()) /
+                                                        1000,
+                                                    )}s`
+                                                    : '—'}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     )}
                 </div>
             )}

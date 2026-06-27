@@ -6,6 +6,19 @@ import { useState } from 'react';
 import { useApi } from '../../../lib/api.client';
 import type { User, Patient } from '../../../lib/types';
 
+const COUNTRY_CODES = [
+  { code: '+27', label: 'South Africa (+27)' },
+  { code: '+1', label: 'US / Canada (+1)' },
+  { code: '+44', label: 'United Kingdom (+44)' },
+  { code: '+61', label: 'Australia (+61)' },
+  { code: '+91', label: 'India (+91)' },
+  { code: '+234', label: 'Nigeria (+234)' },
+  { code: '+254', label: 'Kenya (+254)' },
+  { code: '+233', label: 'Ghana (+233)' },
+  { code: '+971', label: 'UAE (+971)' },
+  { code: '+49', label: 'Germany (+49)' },
+];
+
 function Field({
   label,
   required,
@@ -40,10 +53,12 @@ function PatientModal({
   const [form, setForm] = useState({
     firstName: '',
     lastName: '',
-    phone: '',
     email: '',
     dateOfBirth: '',
   });
+
+  const [countryCode, setCountryCode] = useState('+27');
+  const [phoneLocal, setPhoneLocal] = useState('');
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -51,12 +66,23 @@ function PatientModal({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    setLoading(true);
     setError('');
+
+    const digits = phoneLocal.replace(/\D/g, '');
+
+    if (digits.length < 7) {
+      setError('Enter a valid phone number, including the area/network code.');
+      return;
+    }
+
+    const fullPhone = `${countryCode}${digits}`;
+
+    setLoading(true);
 
     try {
       const patient = await api.post<Patient>('/patients', {
         ...form,
+        phone: fullPhone,
         clinicId,
         dateOfBirth: form.dateOfBirth || undefined,
         email: form.email || undefined,
@@ -77,8 +103,8 @@ function PatientModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-      <div className="patient-card w-full max-w-md p-6">
-        <div className="mb-5 flex items-start justify-between">
+      <div className="patient-card w-full max-w-md max-h-[90vh] overflow-y-auto p-5 sm:p-6">
+        <div className="mb-5 flex items-start justify-between gap-4">
           <div>
             <h2 className="patient-title text-lg font-extrabold">
               New patient
@@ -91,14 +117,14 @@ function PatientModal({
 
           <button
             onClick={onClose}
-            className="patient-secondary-btn grid h-9 w-9 place-items-center rounded-lg"
+            className="patient-secondary-btn grid h-9 w-9 flex-shrink-0 place-items-center rounded-lg"
           >
             <i className="ti ti-x" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <Field label="First name" required>
               <input
                 required
@@ -123,15 +149,36 @@ function PatientModal({
           </div>
 
           <Field label="Phone" required>
-            <input
-              required
-              value={form.phone}
-              placeholder="+27821234567"
-              onChange={(e) =>
-                setForm({ ...form, phone: e.target.value })
-              }
-              className="patient-input"
-            />
+            <div className="flex gap-2">
+              <select
+                value={countryCode}
+                onChange={(e) => setCountryCode(e.target.value)}
+                aria-label="Country code"
+                className="patient-input w-[108px] flex-shrink-0 px-2 sm:w-[150px]"
+              >
+                {COUNTRY_CODES.map((c) => (
+                  <option key={c.code} value={c.code}>
+                    {c.code}
+                  </option>
+                ))}
+              </select>
+
+              <input
+                required
+                inputMode="numeric"
+                value={phoneLocal}
+                placeholder="821234567"
+                onChange={(e) =>
+                  setPhoneLocal(e.target.value.replace(/\D/g, ''))
+                }
+                className="patient-input min-w-0 flex-1"
+              />
+            </div>
+
+            <span className="patient-muted mt-1.5 block text-xs">
+              Saved as {countryCode}
+              {phoneLocal || '...'}
+            </span>
           </Field>
 
           <Field label="Email">
@@ -244,7 +291,7 @@ export default function PatientsClient({
     <div className="w-full max-w-none space-y-5">
       {/* Header */}
 
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="patient-title text-lg font-extrabold">
             Patients
@@ -257,7 +304,7 @@ export default function PatientsClient({
 
         <button
           onClick={() => setShowModal(true)}
-          className="patient-primary-btn flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-extrabold"
+          className="patient-primary-btn flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-extrabold sm:w-auto"
         >
           <i className="ti ti-plus" />
           New patient
@@ -274,11 +321,11 @@ export default function PatientsClient({
             value={search}
             onChange={(e) => handleSearch(e.target.value)}
             placeholder="Search by name, phone, or email..."
-            className="w-full bg-transparent text-sm outline-none patient-title placeholder:patient-muted"
+            className="w-full min-w-0 bg-transparent text-sm outline-none patient-title placeholder:patient-muted"
           />
 
           {searching && (
-            <span className="patient-accent text-xs font-bold">
+            <span className="patient-accent flex-shrink-0 text-xs font-bold">
               Searching...
             </span>
           )}
@@ -311,7 +358,7 @@ export default function PatientsClient({
             {patients.map((patient) => (
               <div
                 key={patient.id}
-                className="patient-row grid grid-cols-[1.5fr_1fr_1.2fr_0.8fr] items-center gap-4 px-5 py-4"
+                className="patient-row flex flex-col gap-3 px-5 py-4 sm:grid sm:grid-cols-[1.5fr_1fr_1.2fr_0.8fr] sm:items-center sm:gap-4"
               >
                 <div className="flex min-w-0 items-center gap-3">
                   <div className="patient-avatar grid h-10 w-10 flex-shrink-0 place-items-center rounded-full text-xs font-extrabold">
@@ -329,20 +376,37 @@ export default function PatientsClient({
                   </div>
                 </div>
 
-                <div className="patient-secondary truncate text-sm">
-                  {patient.phone}
-                </div>
+                <div className="grid grid-cols-2 gap-2 sm:contents">
+                  <div>
+                    <span className="patient-muted mb-0.5 block text-[10px] font-bold uppercase tracking-wide sm:hidden">
+                      Phone
+                    </span>
+                    <span className="patient-secondary block truncate text-sm">
+                      {patient.phone}
+                    </span>
+                  </div>
 
-                <div className="patient-muted truncate text-sm">
-                  {patient.email ?? '—'}
-                </div>
+                  <div>
+                    <span className="patient-muted mb-0.5 block text-[10px] font-bold uppercase tracking-wide sm:hidden">
+                      Email
+                    </span>
+                    <span className="patient-muted block truncate text-sm">
+                      {patient.email ?? '—'}
+                    </span>
+                  </div>
 
-                <div className="patient-muted text-sm">
-                  {patient.dateOfBirth
-                    ? new Date(patient.dateOfBirth).toLocaleDateString(
-                        'en-ZA',
-                      )
-                    : '—'}
+                  <div>
+                    <span className="patient-muted mb-0.5 block text-[10px] font-bold uppercase tracking-wide sm:hidden">
+                      Date of birth
+                    </span>
+                    <span className="patient-muted block text-sm">
+                      {patient.dateOfBirth
+                        ? new Date(patient.dateOfBirth).toLocaleDateString(
+                            'en-ZA',
+                          )
+                        : '—'}
+                    </span>
+                  </div>
                 </div>
               </div>
             ))}

@@ -314,6 +314,12 @@ button {
   background: var(--surface-0);
 }
 
+@media (max-width: 768px) {
+  .content-area {
+    padding: 16px;
+  }
+}
+
 .content-area>* {
   min-width: 0;
 }
@@ -470,3 +476,4 @@ button {
     opacity: 0;
   }
 }
+

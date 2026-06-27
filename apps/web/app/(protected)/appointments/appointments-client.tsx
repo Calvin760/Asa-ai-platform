@@ -73,8 +73,8 @@ function AppointmentModal({
     }
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#1C3D3A]/40">
-            <div className="w-full max-w-md rounded-xl border border-[#E4E0D6] bg-white p-6 shadow-xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#1C3D3A]/40 p-4">
+            <div className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-xl border border-[#E4E0D6] bg-white p-5 shadow-xl sm:p-6">
                 <h2 className="mb-5 text-lg font-bold text-[#1C3D3A]">
                     New appointment
                 </h2>
@@ -242,28 +242,28 @@ export default function AppointmentsClient({
     return (
         <div className="w-full max-w-none space-y-6">
             {/* Header */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <h1 className="patient-title text-lg font-extrabold">Appointments</h1>
                 <button
                     onClick={() => setShowModal(true)}
-                    className="rounded-lg bg-[#B55538] px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-[#9c4730]"
+                    className="w-full rounded-lg bg-[#B55538] px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-[#9c4730] sm:w-auto"
                 >
                     + New appointment
                 </button>
             </div>
 
             {/* Filters */}
-            <div className="flex gap-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
                 <input
                     type="date"
                     value={filterDate}
                     onChange={(e) => handleDateChange(e.target.value)}
-                    className="rounded-lg border border-[#E4E0D6] px-3 py-2 text-sm text-[#1C3D3A] focus:outline-none focus:ring-2 focus:ring-[#B55538]/30"
+                    className="w-full rounded-lg border border-[#E4E0D6] px-3 py-2 text-sm text-[#1C3D3A] focus:outline-none focus:ring-2 focus:ring-[#B55538]/30 sm:w-auto"
                 />
                 <select
                     value={filterStatus}
                     onChange={(e) => handleStatusChange(e.target.value)}
-                    className="rounded-lg border border-[#E4E0D6] px-3 py-2 text-sm text-[#1C3D3A] focus:outline-none focus:ring-2 focus:ring-[#B55538]/30"
+                    className="w-full rounded-lg border border-[#E4E0D6] px-3 py-2 text-sm text-[#1C3D3A] focus:outline-none focus:ring-2 focus:ring-[#B55538]/30 sm:w-auto"
                 >
                     <option value="">All statuses</option>
                     {Object.keys(STATUS_STYLES).map((s) => (
@@ -279,7 +279,7 @@ export default function AppointmentsClient({
                             setFilterStatus('');
                             applyFilters('', '');
                         }}
-                        className="text-sm text-[#1C3D3A66] hover:text-[#1C3D3A]"
+                        className="text-left text-sm text-[#1C3D3A66] hover:text-[#1C3D3A]"
                     >
                         Clear filters
                     </button>
@@ -297,53 +297,55 @@ export default function AppointmentsClient({
                         No appointments found.
                     </p>
                 ) : (
-                    <table className="w-full text-sm">
-                        <thead>
-                            <tr className="border-b border-[#E4E0D6] text-left text-xs text-[#1C3D3A66]">
-                                <th className="px-5 py-3 font-medium">Patient</th>
-                                <th className="px-5 py-3 font-medium">Type</th>
-                                <th className="px-5 py-3 font-medium">Date & time</th>
-                                <th className="px-5 py-3 font-medium">Duration</th>
-                                <th className="px-5 py-3 font-medium">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {appointments.map((a) => (
-                                <tr
-                                    key={a.id}
-                                    className="border-b border-[#E4E0D6] last:border-0 hover:bg-[#F3F0E9]"
-                                >
-                                    <td className="px-5 py-3 font-bold text-[#1C3D3A]">
-                                        {a.patient
-                                            ? `${a.patient.firstName} ${a.patient.lastName}`
-                                            : '—'}
-                                    </td>
-                                    <td className="px-5 py-3 text-[#1C3D3A99]">
-                                        {a.appointmentType.replace('_', ' ')}
-                                    </td>
-                                    <td className="px-5 py-3 text-[#1C3D3A99]">
-                                        {new Date(a.scheduledAt).toLocaleString('en-ZA', {
-                                            timeZone: 'Africa/Johannesburg',
-                                            dateStyle: 'medium',
-                                            timeStyle: 'short',
-                                        })}
-                                    </td>
-                                    <td className="px-5 py-3 text-[#1C3D3A99]">
-                                        {a.durationMins} min
-                                    </td>
-                                    <td className="px-5 py-3">
-                                        <span
-                                            className={`rounded-full px-2.5 py-1 text-[11px] font-extrabold ${
-                                                STATUS_STYLES[a.status] ?? 'bg-[#F3F0E9] text-[#1C3D3A99]'
-                                            }`}
-                                        >
-                                            {a.status}
-                                        </span>
-                                    </td>
+                    <div className="overflow-x-auto">
+                        <table className="w-full min-w-[640px] text-sm">
+                            <thead>
+                                <tr className="border-b border-[#E4E0D6] text-left text-xs text-[#1C3D3A66]">
+                                    <th className="px-5 py-3 font-medium">Patient</th>
+                                    <th className="px-5 py-3 font-medium">Type</th>
+                                    <th className="px-5 py-3 font-medium">Date & time</th>
+                                    <th className="px-5 py-3 font-medium">Duration</th>
+                                    <th className="px-5 py-3 font-medium">Status</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {appointments.map((a) => (
+                                    <tr
+                                        key={a.id}
+                                        className="border-b border-[#E4E0D6] last:border-0 hover:bg-[#F3F0E9]"
+                                    >
+                                        <td className="whitespace-nowrap px-5 py-3 font-bold text-[#1C3D3A]">
+                                            {a.patient
+                                                ? `${a.patient.firstName} ${a.patient.lastName}`
+                                                : '—'}
+                                        </td>
+                                        <td className="whitespace-nowrap px-5 py-3 text-[#1C3D3A99]">
+                                            {a.appointmentType.replace('_', ' ')}
+                                        </td>
+                                        <td className="whitespace-nowrap px-5 py-3 text-[#1C3D3A99]">
+                                            {new Date(a.scheduledAt).toLocaleString('en-ZA', {
+                                                timeZone: 'Africa/Johannesburg',
+                                                dateStyle: 'medium',
+                                                timeStyle: 'short',
+                                            })}
+                                        </td>
+                                        <td className="whitespace-nowrap px-5 py-3 text-[#1C3D3A99]">
+                                            {a.durationMins} min
+                                        </td>
+                                        <td className="whitespace-nowrap px-5 py-3">
+                                            <span
+                                                className={`rounded-full px-2.5 py-1 text-[11px] font-extrabold ${
+                                                    STATUS_STYLES[a.status] ?? 'bg-[#F3F0E9] text-[#1C3D3A99]'
+                                                }`}
+                                            >
+                                                {a.status}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 )}
             </div>
 
