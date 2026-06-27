@@ -68,6 +68,7 @@ export class ClinicService {
                 reminderSchedule: dto.reminderSchedule,
                 reminderHoursAhead: dto.reminderHoursAhead,
                 isActive: dto.isActive,
+                twilioWhatsAppNumber: dto.twilioWhatsAppNumber,
             },
         });
     }
