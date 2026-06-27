@@ -154,7 +154,7 @@ function PatientModal({
                 value={countryCode}
                 onChange={(e) => setCountryCode(e.target.value)}
                 aria-label="Country code"
-                className="patient-input w-[108px] flex-shrink-0 px-2 sm:w-[150px]"
+                className="patient-input !w-[78px] flex-shrink-0 px-1.5 sm:!w-[88px]"
               >
                 {COUNTRY_CODES.map((c) => (
                   <option key={c.code} value={c.code}>
@@ -179,7 +179,7 @@ function PatientModal({
               Saved as {countryCode}
               {phoneLocal || '...'}
             </span>
-          </Field>
+        </Field>
 
           <Field label="Email">
             <input
